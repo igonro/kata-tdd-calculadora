@@ -29,16 +29,30 @@ def test_division_entre_0_devuelve_error():
         calc.division(5, 0)
 
 
+@pytest.mark.parametrize("n,expected", [(16, 4), (6.25, 2.5)])
+def test_raiz_cuadrada_devuelve_resultado_correcto(n, expected):
+    assert calc.raiz_cuadrada(n) == expected
+
+
+def test_raiz_cuadrada_negativa_devuelve_error():
+    with pytest.raises(
+        ValueError,
+        match="Error: No se puede obtener raíz cuadrada de un número negativo",
+    ):
+        calc.raiz_cuadrada(-16)
+
+
 @pytest.mark.parametrize(
     "input,expected",
     [
-        ("suma 2 4.4", ("suma", 2, 4.4)),
-        ("div -3.1 0", ("division", -3.1, 0)),
-        ("mult -3.33 1.0", ("multiplicacion", -3.33, 1.0)),
+        ("suma 2 4.4", ("suma", [2, 4.4])),
+        ("div -3.1 0", ("division", [-3.1, 0])),
+        ("mult -3.33 1.0", ("multiplicacion", [-3.33, 1.0])),
+        ("sqrt 1.0", ("raiz_cuadrada", [1.0])),
     ],
 )
-def test_parsear_texto_devuelve_resultado_correcto(input, expected):
-    assert calc.parse_entrada(input) == expected
+def test_parsear_entrada_devuelve_resultado_correcto(input, expected):
+    assert calc.parsear_entrada(input) == expected
 
 
 @pytest.mark.parametrize(
@@ -52,16 +66,17 @@ def test_parsear_texto_devuelve_resultado_correcto(input, expected):
 )
 def test_parsear_entrada_devuelve_error_con_argumentos_incorrectos(input, exception):
     with pytest.raises(ValueError, match=exception):
-        calc.parse_entrada(input)
+        calc.parsear_entrada(input)
 
 
 @pytest.mark.parametrize(
-    "op,n1,n2,expected",
+    "op,nums,expected",
     [
-        ("suma", 2, 4.4, 6.4),
-        ("division", -3.1, 2, -1.55),
-        ("multiplicacion", -3.33, 10, -33.3),
+        ("suma", [2, 4.4], 6.4),
+        ("division", [-3.1, 2], -1.55),
+        ("multiplicacion", [-3.33, 10], -33.3),
+        ("raiz_cuadrada", [6.25], 2.5),
     ],
 )
-def test_ejecutar_operacion_devuelve_resultado_correcto(op, n1, n2, expected):
-    assert calc.ejecutar_operacion(op, n1, n2) == expected
+def test_ejecutar_operacion_devuelve_resultado_correcto(op, nums, expected):
+    assert calc.ejecutar_operacion(op, nums) == expected

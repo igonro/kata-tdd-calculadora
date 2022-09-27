@@ -1,8 +1,11 @@
+import math
+
 OP_TO_FUNC = {
     "suma": "suma",
     "resta": "resta",
     "mult": "multiplicacion",
     "div": "division",
+    "sqrt": "raiz_cuadrada",
 }
 
 
@@ -25,23 +28,31 @@ def division(a, b):
         raise ValueError("Error: No se puede dividir entre cero")
 
 
-def parse_entrada(texto):
+def raiz_cuadrada(a):
+    if a < 0:
+        raise ValueError(
+            "Error: No se puede obtener raíz cuadrada de un número negativo"
+        )
+    return math.sqrt(a)
+
+
+def parsear_entrada(texto):
     args = texto.strip().split(" ")
-    if len(args) != 3:
-        raise ValueError("Error: Número de parámetros incorrecto")
-    op, n1, n2 = args
+    op, *nums = args
     if op not in OP_TO_FUNC:
         raise ValueError("Error: Introduce una operación válida")
+    if (op == "sqrt" and len(nums) != 1) or (op != "sqrt" and len(nums) != 2):
+        raise ValueError("Error: Número de parámetros incorrecto")
     try:
-        n1, n2 = float(n1), float(n2)
+        nums = list(map(float, nums))
     except ValueError:
         raise ValueError("Error: Introduce un número válido")
-    return OP_TO_FUNC[op], n1, n2
+    return OP_TO_FUNC[op], nums
 
 
-def ejecutar_operacion(operacion, n1, n2):
+def ejecutar_operacion(operacion, nums):
     func = globals()[operacion]
-    return func(n1, n2)
+    return func(*nums)
 
 
 def main():
@@ -52,8 +63,8 @@ def main():
             if entrada == "q":
                 break
             try:
-                op, n1, n2 = parse_entrada(entrada)
-                resultado = ejecutar_operacion(op, n1, n2)
+                op, nums = parsear_entrada(entrada)
+                resultado = ejecutar_operacion(op, nums)
                 print(f"Resultado: {resultado}")
             except ValueError as e:
                 print(e)
