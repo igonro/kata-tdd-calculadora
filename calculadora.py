@@ -9,16 +9,16 @@ OP_TO_FUNC = {
 }
 
 
-def suma(a, b):
-    return a + b
+def suma(*args):
+    return sum(args)
 
 
 def resta(a, b):
     return a - b
 
 
-def multiplicacion(a, b):
-    return a * b
+def multiplicacion(*args):
+    return math.prod(args)
 
 
 def division(a, b):
@@ -41,7 +41,11 @@ def parsear_entrada(texto):
     op, *nums = args
     if op not in OP_TO_FUNC:
         raise ValueError("Error: Introduce una operación válida")
-    if (op == "sqrt" and len(nums) != 1) or (op != "sqrt" and len(nums) != 2):
+    if (
+        (op == "sqrt" and len(nums) != 1)
+        or (op in ["resta", "div"] and len(nums) != 2)
+        or (op in ["suma", "mult"] and len(nums) < 1)
+    ):
         raise ValueError("Error: Número de parámetros incorrecto")
     try:
         nums = list(map(float, nums))
